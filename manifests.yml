@@ -1,0 +1,76 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: "open-cluster-management-scale"
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: "hcpburn"
+  namespace: "open-cluster-management-scale"
+automountServiceAccountToken: false
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: "hcpburn"
+  namespace: "open-cluster-management-scale"
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: "hcpburn"
+  namespace: "open-cluster-management-scale"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: "hcpburn"
+subjects:
+  - kind: ServiceAccount
+    name: "hcpburn"
+    namespace: "open-cluster-management-scale"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "hcpburn"
+  namespace: "open-cluster-management-scale"
+  labels:
+    app: "hcpburn"
+spec:
+  replicas: 50
+  selector:
+    matchLabels:
+      app: "hcpburn"
+  template:
+    metadata:
+      labels:
+        app: "hcpburn"
+    spec:
+      automountServiceAccountToken: true
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: "RuntimeDefault"
+      serviceAccountName: "hcpburn"
+      containers:
+        - name: "hcpburn"
+          image: "quay.io/mshen/hcpburn@sha256:ed542e3720b983c875cd0f481335737fbf7f64a05a413bb776ca205b63330b74"
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - "ALL"
