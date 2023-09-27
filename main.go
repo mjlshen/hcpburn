@@ -45,6 +45,8 @@ func main() {
 		}
 	}
 
+	config.QPS = 100
+	config.Burst = 200
 	// creates the clientset
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
@@ -68,6 +70,8 @@ func main() {
 func CreateConfigMaps(wg *sync.WaitGroup, clientset *kubernetes.Clientset) error {
 	defer wg.Done()
 
+	data := RandStringRunes(1024)
+
 	for {
 		randomName := RandStringRunes(10)
 
@@ -81,7 +85,7 @@ func CreateConfigMaps(wg *sync.WaitGroup, clientset *kubernetes.Clientset) error
 				},
 			},
 			Data: map[string]string{
-				"data": RandStringRunes(1024),
+				"data": data,
 			},
 		}, metav1.CreateOptions{}); err != nil {
 			panic(err)

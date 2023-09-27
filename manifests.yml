@@ -67,7 +67,7 @@ spec:
       serviceAccountName: "hcpburn"
       containers:
         - name: "hcpburn"
-          image: "quay.io/mshen/hcpburn@sha256:ed542e3720b983c875cd0f481335737fbf7f64a05a413bb776ca205b63330b74"
+          image: "quay.io/mshen/hcpburn@sha256:26ec78a04738ac2f6c2d541aa17c7b7b3ac462294378f531eae5cf20a3265c89"
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
